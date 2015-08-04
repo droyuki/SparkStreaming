@@ -17,12 +17,10 @@ object Streaming {
       val zkQuorum = "localhost:2181";
       val group = "topic-p6-r2-consumer-group"
 
-      //Kakfa has 6 partitions, here create 6 Input DStream
       val streams = (1 to 6).map(_ =>
         KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
       )
 
-      ///将6个streams进行union
       val partitions = ssc.union(streams).repartition(18).map("DataReceived: " + _)
 
       partitions.print()
